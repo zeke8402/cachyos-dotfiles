@@ -18,8 +18,15 @@ Item {
 
         Item { Layout.fillWidth: true }
 
-        VolumeStatus {
-            onToggleRequested: root.toggleVolumePanel()
+        RowLayout {
+            Layout.alignment: Qt.AlignRight
+            spacing: 8
+
+            TrayWidget {}
+
+            VolumeStatus {
+                onToggleRequested: root.toggleVolumePanel()
+            }
         }
     }
 
