@@ -1,4 +1,5 @@
 //@ pragma IconTheme Adwaita
+//@ pragma UseQApplication
 import Quickshell
 import Quickshell.Services.Pipewire
 import Quickshell.Wayland
