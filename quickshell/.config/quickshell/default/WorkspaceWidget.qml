@@ -4,6 +4,8 @@ import QtQuick
 import QtQuick.Layouts
 
 RowLayout {
+    id: root
+    required property QtObject theme
     spacing: 6
 
     Repeater {
@@ -21,8 +23,8 @@ RowLayout {
             Rectangle {
                 anchors.fill: parent
                 radius: 5
-                color: isActive ? "#2f5f4a" : "#2a2d44"
-                border.color: isActive ? "#6ee7b7" : "#3b4261"
+                color: isActive ? root.theme.accent : root.theme.panelSurface
+                border.color: isActive ? root.theme.accentStrong : root.theme.panelBorder
                 border.width: 1
             }
 
@@ -30,7 +32,7 @@ RowLayout {
                 id: workspaceLabel
                 anchors.centerIn: parent
                 text: index + 1
-                color: isActive ? "#d8ffef" : (ws ? "#c0caf5" : "#7a809a")
+                color: isActive ? root.theme.accentForeground : (ws ? root.theme.textPrimary : root.theme.textMuted)
                 font { pixelSize: 12; bold: true }
             }
 

@@ -1,0 +1,6 @@
+backend = "fastresize"
+color_space = "lch"
+palette = "dark"
+
+[templates]
+colors = { template = 'colors.json', target = '~/.cache/wallust/colors.json', pywal = true }

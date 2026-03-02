@@ -6,6 +6,7 @@ import Quickshell.Widgets
 
 Scope {
     id: root
+    required property QtObject theme
 
     property bool shouldShowOsd: false
     readonly property PwNode sinkNode: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink : null
@@ -42,7 +43,7 @@ Scope {
             Rectangle {
                 anchors.fill: parent
                 radius: height / 2
-                color: "#80000000"
+                color: root.theme.overlayBackground
 
                 RowLayout {
                     anchors.fill: parent
@@ -56,8 +57,8 @@ Scope {
                         onPaint: {
                             var ctx = getContext("2d")
                             ctx.clearRect(0, 0, width, height)
-                            ctx.fillStyle = "#ffffff"
-                            ctx.strokeStyle = "#ffffff"
+                            ctx.fillStyle = root.theme.textPrimary
+                            ctx.strokeStyle = root.theme.textPrimary
                             ctx.lineWidth = 2.2
 
                             var bx = 4
@@ -87,13 +88,18 @@ Scope {
                             ctx.arc(mx + 7, cy, 8, -0.7, 0.7)
                             ctx.stroke()
                         }
+
+                        Connections {
+                            target: root.theme
+                            function onTextPrimaryChanged() { speakerIcon.requestPaint() }
+                        }
                     }
 
                     Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: 10
                         radius: 20
-                        color: "#50ffffff"
+                        color: root.theme.overlayTrack
 
                         Rectangle {
                             anchors.left: parent.left
@@ -101,10 +107,12 @@ Scope {
                             anchors.bottom: parent.bottom
                             implicitWidth: parent.width * root.sinkVolume
                             radius: parent.radius
+                            color: root.theme.accent
                         }
                     }
                 }
             }
         }
     }
+
 }

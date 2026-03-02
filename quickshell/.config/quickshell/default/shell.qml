@@ -1,4 +1,4 @@
-//@ pragma IconTheme Adwaita
+//@ pragma IconTheme Papirus
 //@ pragma UseQApplication
 import Quickshell
 import Quickshell.Services.Pipewire
@@ -9,6 +9,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 WlrLayershell {
+    id: root
     layer: WlrLayer.Top
     namespace: "quickshell"
     keyboardFocus: WlrKeyboardFocus.None
@@ -16,21 +17,28 @@ WlrLayershell {
     anchors.left: true
     anchors.right: true
     implicitHeight: 40
-    color: "#1a1b26"
+    color: theme.barBackground
+
+    Theme {
+        id: theme
+    }
 
     StatusBar {
         id: statusBar
+        theme: theme
         anchors.fill: parent
     }
 
-    VolumeOsd {}
+    VolumeOsd {
+        theme: theme
+    }
 
     PanelWindow {
         id: volumePanel
         visible: statusBar.volumePanelOpen
         implicitWidth: 250
         implicitHeight: 600
-        color: "#1f2335"
+        color: theme.panelBackground
         readonly property PwNode sinkNode: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink : null
         readonly property PwNode sourceNode: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource : null
         readonly property real sinkVolume: sinkNode && sinkNode.audio ? sinkNode.audio.volume : 0
@@ -68,7 +76,7 @@ WlrLayershell {
 
                 Text {
                     text: "OUT"
-                    color: "#c0caf5"
+                    color: theme.textPrimary
                     font.pixelSize: 11
                     font.bold: true
                     width: 32
@@ -90,7 +98,7 @@ WlrLayershell {
 
                 Text {
                     text: "IN"
-                    color: "#c0caf5"
+                    color: theme.textPrimary
                     font.pixelSize: 11
                     font.bold: true
                     width: 32
@@ -112,13 +120,13 @@ WlrLayershell {
                 Layout.fillWidth: true
                 height: 36
                 radius: 8
-                color: "#2a2d44"
-                border.color: "#3b4261"
+                color: theme.panelSurface
+                border.color: theme.panelBorder
 
                 Text {
                     anchors.centerIn: parent
                     text: "Open Pavucontrol"
-                    color: "#c0caf5"
+                    color: theme.textPrimary
                     font.pixelSize: 12
                 }
 

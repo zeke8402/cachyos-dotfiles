@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 Item {
     id: root
+    required property QtObject theme
     property bool volumePanelOpen: false
 
     function toggleVolumePanel() {
@@ -14,7 +15,9 @@ Item {
         anchors.fill: parent
         anchors.margins: 8
 
-        WorkspaceWidget {}
+        WorkspaceWidget {
+            theme: root.theme
+        }
 
         Item { Layout.fillWidth: true }
 
@@ -25,12 +28,14 @@ Item {
             TrayWidget {}
 
             VolumeStatus {
+                theme: root.theme
                 onToggleRequested: root.toggleVolumePanel()
             }
         }
     }
 
     ClockWidget {
+        theme: root.theme
         anchors.centerIn: parent
     }
 }

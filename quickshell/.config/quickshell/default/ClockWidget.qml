@@ -2,11 +2,12 @@ import QtQuick
 
 Text {
     id: root
+    required property QtObject theme
 
     property date now: new Date()
 
     text: Qt.formatDateTime(now, "ddd MMM d  HH:mm:ss")
-    color: "#c0caf5"
+    color: root.theme.textPrimary
     font.pixelSize: 13
     font.bold: true
     horizontalAlignment: Text.AlignHCenter

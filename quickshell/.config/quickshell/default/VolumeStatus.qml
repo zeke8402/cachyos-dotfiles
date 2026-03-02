@@ -7,6 +7,7 @@ import QtQuick.Controls
 
 Item {
     id: volumeStatus
+    required property QtObject theme
     signal toggleRequested()
     readonly property PwNode sinkNode: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink : null
     readonly property PwNode sourceNode: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource : null
@@ -44,8 +45,8 @@ Item {
         width: 34
         height: 22
         radius: 6
-        color: "#1f2335"
-        border.color: "#3b4261"
+        color: volumeStatus.theme.panelBackground
+        border.color: volumeStatus.theme.panelBorder
 
         Canvas {
             id: volumeIcon
@@ -55,8 +56,8 @@ Item {
             onPaint: {
                 var ctx = getContext("2d")
                 ctx.clearRect(0, 0, width, height)
-                ctx.fillStyle = "#c0caf5"
-                ctx.strokeStyle = "#c0caf5"
+                ctx.fillStyle = volumeStatus.theme.textPrimary
+                ctx.strokeStyle = volumeStatus.theme.textPrimary
                 ctx.lineWidth = 1.6
 
                 ctx.beginPath()
@@ -79,6 +80,11 @@ Item {
                     ctx.stroke()
                 }
             }
+        }
+
+        Connections {
+            target: volumeStatus.theme
+            function onTextPrimaryChanged() { volumeIcon.requestPaint() }
         }
 
         MouseArea {
