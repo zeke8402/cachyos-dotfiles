@@ -43,9 +43,10 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: 34
         height: 22
-        radius: 6
-        color: "#1f2335"
-        border.color: "#3b4261"
+        radius: 2
+        color: "#000000"
+        border.color: "#1a7a1a"
+        border.width: 1
 
         Canvas {
             id: volumeIcon
@@ -55,8 +56,8 @@ Item {
             onPaint: {
                 var ctx = getContext("2d")
                 ctx.clearRect(0, 0, width, height)
-                ctx.fillStyle = "#c0caf5"
-                ctx.strokeStyle = "#c0caf5"
+                ctx.fillStyle = "#39ff14"
+                ctx.strokeStyle = "#39ff14"
                 ctx.lineWidth = 1.6
 
                 ctx.beginPath()

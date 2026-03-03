@@ -16,11 +16,25 @@ WlrLayershell {
     anchors.left: true
     anchors.right: true
     implicitHeight: 40
-    color: "#1a1b26"
+    color: "#000000"
 
     StatusBar {
         id: statusBar
         anchors.fill: parent
+    }
+
+    // Scanline overlay — simulates phosphor CRT screen artifacts
+    Canvas {
+        anchors.fill: parent
+        z: 100
+        onPaint: {
+            var ctx = getContext("2d")
+            ctx.clearRect(0, 0, width, height)
+            ctx.fillStyle = "rgba(57, 255, 20, 0.10)"
+            for (var y = 0; y < height; y += 3) {
+                ctx.fillRect(0, y, width, 1)
+            }
+        }
     }
 
     VolumeOsd {}
@@ -30,7 +44,9 @@ WlrLayershell {
         visible: statusBar.volumePanelOpen
         implicitWidth: 250
         implicitHeight: 600
-        color: "#1f2335"
+        color: "#000000"
+        border.color: "#1a7a1a"
+        border.width: 1
         readonly property PwNode sinkNode: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink : null
         readonly property PwNode sourceNode: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource : null
         readonly property real sinkVolume: sinkNode && sinkNode.audio ? sinkNode.audio.volume : 0
@@ -68,19 +84,44 @@ WlrLayershell {
 
                 Text {
                     text: "OUT"
-                    color: "#c0caf5"
+                    color: "#39ff14"
                     font.pixelSize: 11
                     font.bold: true
+                    font.family: "monospace"
                     width: 32
                     horizontalAlignment: Text.AlignHCenter
                 }
 
                 Slider {
+                    id: sinkSlider
                     Layout.fillWidth: true
                     from: 0
                     to: 1
                     value: volumePanel.sinkVolume
                     onMoved: volumePanel.setSinkVolume(value)
+
+                    background: Rectangle {
+                        x: sinkSlider.leftPadding
+                        y: sinkSlider.topPadding + sinkSlider.availableHeight / 2 - height / 2
+                        width: sinkSlider.availableWidth
+                        height: 4
+                        radius: 2
+                        color: "#0a3300"
+                        Rectangle {
+                            width: sinkSlider.visualPosition * parent.width
+                            height: parent.height
+                            radius: parent.radius
+                            color: "#39ff14"
+                        }
+                    }
+                    handle: Rectangle {
+                        x: sinkSlider.leftPadding + sinkSlider.visualPosition * (sinkSlider.availableWidth - width)
+                        y: sinkSlider.topPadding + sinkSlider.availableHeight / 2 - height / 2
+                        width: 10
+                        height: 10
+                        radius: 5
+                        color: "#39ff14"
+                    }
                 }
             }
 
@@ -90,19 +131,44 @@ WlrLayershell {
 
                 Text {
                     text: "IN"
-                    color: "#c0caf5"
+                    color: "#39ff14"
                     font.pixelSize: 11
                     font.bold: true
+                    font.family: "monospace"
                     width: 32
                     horizontalAlignment: Text.AlignHCenter
                 }
 
                 Slider {
+                    id: sourceSlider
                     Layout.fillWidth: true
                     from: 0
                     to: 1
                     value: volumePanel.sourceVolume
                     onMoved: volumePanel.setSourceVolume(value)
+
+                    background: Rectangle {
+                        x: sourceSlider.leftPadding
+                        y: sourceSlider.topPadding + sourceSlider.availableHeight / 2 - height / 2
+                        width: sourceSlider.availableWidth
+                        height: 4
+                        radius: 2
+                        color: "#0a3300"
+                        Rectangle {
+                            width: sourceSlider.visualPosition * parent.width
+                            height: parent.height
+                            radius: parent.radius
+                            color: "#39ff14"
+                        }
+                    }
+                    handle: Rectangle {
+                        x: sourceSlider.leftPadding + sourceSlider.visualPosition * (sourceSlider.availableWidth - width)
+                        y: sourceSlider.topPadding + sourceSlider.availableHeight / 2 - height / 2
+                        width: 10
+                        height: 10
+                        radius: 5
+                        color: "#39ff14"
+                    }
                 }
             }
 
@@ -111,15 +177,18 @@ WlrLayershell {
             Rectangle {
                 Layout.fillWidth: true
                 height: 36
-                radius: 8
-                color: "#2a2d44"
-                border.color: "#3b4261"
+                radius: 2
+                color: "#000000"
+                border.color: "#0a3300"
+                border.width: 1
 
                 Text {
                     anchors.centerIn: parent
-                    text: "Open Pavucontrol"
-                    color: "#c0caf5"
+                    text: "OPEN PAVUCONTROL"
+                    color: "#39ff14"
                     font.pixelSize: 12
+                    font.family: "monospace"
+                    font.bold: true
                 }
 
                 MouseArea {
@@ -128,6 +197,21 @@ WlrLayershell {
                         statusBar.volumePanelOpen = false
                         Quickshell.execDetached(["pavucontrol"])
                     }
+                }
+            }
+
+            Item { Layout.fillHeight: true }
+        }
+
+        Canvas {
+            anchors.fill: parent
+            z: 100
+            onPaint: {
+                var ctx = getContext("2d")
+                ctx.clearRect(0, 0, width, height)
+                ctx.fillStyle = "rgba(57, 255, 20, 0.10)"
+                for (var y = 0; y < height; y += 3) {
+                    ctx.fillRect(0, y, width, 1)
                 }
             }
         }

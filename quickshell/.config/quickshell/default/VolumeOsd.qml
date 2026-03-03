@@ -42,7 +42,9 @@ Scope {
             Rectangle {
                 anchors.fill: parent
                 radius: height / 2
-                color: "#80000000"
+                color: "#dd000000"
+                border.color: "#1a7a1a"
+                border.width: 1
 
                 RowLayout {
                     anchors.fill: parent
@@ -56,8 +58,8 @@ Scope {
                         onPaint: {
                             var ctx = getContext("2d")
                             ctx.clearRect(0, 0, width, height)
-                            ctx.fillStyle = "#ffffff"
-                            ctx.strokeStyle = "#ffffff"
+                            ctx.fillStyle = "#39ff14"
+                            ctx.strokeStyle = "#39ff14"
                             ctx.lineWidth = 2.2
 
                             var bx = 4
@@ -91,9 +93,9 @@ Scope {
 
                     Rectangle {
                         Layout.fillWidth: true
-                        implicitHeight: 10
-                        radius: 20
-                        color: "#50ffffff"
+                        implicitHeight: 6
+                        radius: 3
+                        color: "#0a3300"
 
                         Rectangle {
                             anchors.left: parent.left
@@ -101,6 +103,7 @@ Scope {
                             anchors.bottom: parent.bottom
                             implicitWidth: parent.width * root.sinkVolume
                             radius: parent.radius
+                            color: "#39ff14"
                         }
                     }
                 }

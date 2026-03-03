@@ -3,6 +3,7 @@ import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 
 RowLayout {
     id: trayRoot
@@ -23,10 +24,16 @@ RowLayout {
             Layout.preferredHeight: height
 
             IconImage {
+                id: trayIcon
                 anchors.centerIn: parent
                 source: trayItem.icon
                 implicitSize: 18
                 asynchronous: true
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    colorization: 1.0
+                    colorizationColor: "#39ff14"
+                }
             }
 
             MouseArea {
