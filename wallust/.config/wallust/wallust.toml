@@ -4,3 +4,4 @@ palette = "dark"
 
 [templates]
 colors = { template = 'colors.json', target = '~/.cache/wallust/colors.json', pywal = true }
+kde = { template = 'Wallust.colors', target = '~/.local/share/color-schemes/Wallust.colors', pywal = true }
