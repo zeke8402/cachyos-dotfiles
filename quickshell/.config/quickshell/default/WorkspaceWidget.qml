@@ -43,18 +43,20 @@ RowLayout {
                 radius: 2
                 color: isActive ? "#040f04" : "#000000"
                 border.color: isActive ? "#39ff14" : (isOccupied ? "#1a7a1a" : "#0a3300")
-                border.width: isActive ? 2 : 1
+                border.width: isActive ? 3 : 2
             }
 
             Text {
                 id: wsLabel
                 anchors.centerIn: parent
+                anchors.verticalCenterOffset: 3
+                anchors.horizontalCenterOffset: 1
                 text: workspaceRow.toRoman(index + 1)
                 color: isActive ? "#39ff14" : (isOccupied ? "#1a7a1a" : "#0a3300")
                 font {
                     pixelSize: 11
                     bold: true
-                    family: "monospace"
+                    family: "First Legion"
                 }
             }
 

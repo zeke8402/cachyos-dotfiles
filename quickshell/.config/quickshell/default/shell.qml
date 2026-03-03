@@ -1,4 +1,4 @@
-//@ pragma IconTheme Adwaita
+//@ pragma IconTheme Papirus
 //@ pragma UseQApplication
 import Quickshell
 import Quickshell.Services.Pipewire
@@ -17,6 +17,9 @@ WlrLayershell {
     anchors.right: true
     implicitHeight: 40
     color: "#000000"
+
+    FontLoader { source: "fonts/First Legion.ttf" }
+    FontLoader { source: "fonts/VT323-Regular.ttf" }
 
     StatusBar {
         id: statusBar
@@ -45,8 +48,6 @@ WlrLayershell {
         implicitWidth: 250
         implicitHeight: 600
         color: "#000000"
-        border.color: "#1a7a1a"
-        border.width: 1
         readonly property PwNode sinkNode: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink : null
         readonly property PwNode sourceNode: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource : null
         readonly property real sinkVolume: sinkNode && sinkNode.audio ? sinkNode.audio.volume : 0
@@ -85,9 +86,8 @@ WlrLayershell {
                 Text {
                     text: "OUT"
                     color: "#39ff14"
-                    font.pixelSize: 11
-                    font.bold: true
-                    font.family: "monospace"
+                    font.pixelSize: 18
+                    font.family: "VT323"
                     width: 32
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -132,9 +132,8 @@ WlrLayershell {
                 Text {
                     text: "IN"
                     color: "#39ff14"
-                    font.pixelSize: 11
-                    font.bold: true
-                    font.family: "monospace"
+                    font.pixelSize: 18
+                    font.family: "VT323"
                     width: 32
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -186,9 +185,8 @@ WlrLayershell {
                     anchors.centerIn: parent
                     text: "OPEN PAVUCONTROL"
                     color: "#39ff14"
-                    font.pixelSize: 12
-                    font.family: "monospace"
-                    font.bold: true
+                    font.pixelSize: 18
+                    font.family: "VT323"
                 }
 
                 MouseArea {
@@ -206,6 +204,8 @@ WlrLayershell {
         Canvas {
             anchors.fill: parent
             z: 100
+            Component.onCompleted: requestPaint()
+            onVisibleChanged: if (visible) requestPaint()
             onPaint: {
                 var ctx = getContext("2d")
                 ctx.clearRect(0, 0, width, height)
@@ -214,6 +214,14 @@ WlrLayershell {
                     ctx.fillRect(0, y, width, 1)
                 }
             }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "transparent"
+            border.color: "#1a7a1a"
+            border.width: 1
+            z: 101
         }
     }
 }

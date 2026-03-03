@@ -5,11 +5,10 @@ Text {
 
     property date now: new Date()
 
-    text: Qt.formatDateTime(now, "dddd MMMM d  HH:mm:ss").toUpperCase()
+    text: Qt.formatDateTime(now, "dddd MMMM d  HH:mm:ss")
     color: "#39ff14"
-    font.pixelSize: 13
-    font.bold: true
-    font.family: "monospace"
+    font.pixelSize: 24
+    font.family: "VT323"
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
     renderType: Text.NativeRendering
