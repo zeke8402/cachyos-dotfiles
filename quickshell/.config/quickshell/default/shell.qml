@@ -4,54 +4,65 @@ import Quickshell
 import Quickshell.Services.Pipewire
 import Quickshell.Wayland
 import Quickshell.Wayland._WlrLayerShell
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+import "darktide_quotes.js" as DarktideQuotes
 
-WlrLayershell {
-    layer: WlrLayer.Top
-    namespace: "quickshell"
-    keyboardFocus: WlrKeyboardFocus.None
-    anchors.top: true
-    anchors.left: true
-    anchors.right: true
-    implicitHeight: 40
-    color: "#000000"
-
+Scope {
     FontLoader { source: "fonts/First Legion.ttf" }
     FontLoader { source: "fonts/VT323-Regular.ttf" }
 
-    StatusBar {
-        id: statusBar
-        anchors.fill: parent
-    }
+    WlrLayershell {
+        layer: WlrLayer.Top
+        namespace: "quickshell"
+        keyboardFocus: WlrKeyboardFocus.None
+        anchors.top: true
+        anchors.left: true
+        anchors.right: true
+        implicitHeight: 40
+        color: "#000000"
 
-    // Scanline overlay — simulates phosphor CRT screen artifacts
-    Canvas {
-        anchors.fill: parent
-        z: 100
-        onPaint: {
-            var ctx = getContext("2d")
-            ctx.clearRect(0, 0, width, height)
-            ctx.fillStyle = "rgba(57, 255, 20, 0.10)"
-            for (var y = 0; y < height; y += 3) {
-                ctx.fillRect(0, y, width, 1)
+        StatusBar {
+            id: statusBar
+            anchors.fill: parent
+        }
+
+        // Scanline overlay — simulates phosphor CRT screen artifacts
+        Canvas {
+            anchors.fill: parent
+            z: 100
+            onPaint: {
+                var ctx = getContext("2d")
+                ctx.clearRect(0, 0, width, height)
+                ctx.fillStyle = "rgba(57, 255, 20, 0.06)"
+                ctx.fillRect(0, 0, width, height)
+                ctx.fillStyle = "rgba(0, 0, 0, 0.28)"
+                for (var y = 0; y < height; y += 3) {
+                    ctx.fillRect(0, y, width, 1)
+                }
             }
         }
     }
 
-    VolumeOsd {}
-
     PanelWindow {
-        id: volumePanel
-        visible: statusBar.volumePanelOpen
-        implicitWidth: 250
+        id: settingsPanel
+        visible: statusBar.settingsPanelOpen
+        implicitWidth: 500
         implicitHeight: 600
         color: "#000000"
+
         readonly property PwNode sinkNode: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink : null
         readonly property PwNode sourceNode: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource : null
         readonly property real sinkVolume: sinkNode && sinkNode.audio ? sinkNode.audio.volume : 0
         readonly property real sourceVolume: sourceNode && sourceNode.audio ? sourceNode.audio.volume : 0
+
+        property int quoteIndex: 0
+        readonly property var quotes: DarktideQuotes.quotes
+
+        onVisibleChanged: {
+            if (visible) quoteIndex = Math.floor(Math.random() * quotes.length)
+        }
 
         anchors {
             top: true
@@ -62,154 +73,282 @@ WlrLayershell {
             right: 16
         }
 
-        function setSinkVolume(v: real) {
-            if (sinkNode && sinkNode.audio) {
-                sinkNode.audio.volume = v
-            }
+        PwObjectTracker {
+            objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource].filter(n => n)
         }
 
+        function setSinkVolume(v: real) {
+            if (sinkNode && sinkNode.audio) sinkNode.audio.volume = v
+        }
         function setSourceVolume(v: real) {
-            if (sourceNode && sourceNode.audio) {
-                sourceNode.audio.volume = v
-            }
+            if (sourceNode && sourceNode.audio) sourceNode.audio.volume = v
         }
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 16
-            spacing: 16
+            anchors.margins: 14
+            spacing: 12
 
-            RowLayout {
+            // ── AM Logo ───────────────────────────────────────────────────
+            Item {
                 Layout.fillWidth: true
-                spacing: 10
+                implicitHeight: amLogo.implicitHeight + 8
 
-                Text {
-                    text: "OUT"
-                    color: "#39ff14"
-                    font.pixelSize: 18
-                    font.family: "VT323"
-                    width: 32
-                    horizontalAlignment: Text.AlignHCenter
+                FileView {
+                    id: logoFile
+                    path: Qt.resolvedUrl("am_logo.txt").toString().replace("file://", "")
+                    blockLoading: true
+                    preload: true
                 }
 
-                Slider {
-                    id: sinkSlider
-                    Layout.fillWidth: true
-                    from: 0
-                    to: 1
-                    value: volumePanel.sinkVolume
-                    onMoved: volumePanel.setSinkVolume(value)
+                Text {
+                    id: amLogo
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
+                    anchors.topMargin: 4
+                    text: logoFile.text()
 
-                    background: Rectangle {
-                        x: sinkSlider.leftPadding
-                        y: sinkSlider.topPadding + sinkSlider.availableHeight / 2 - height / 2
-                        width: sinkSlider.availableWidth
-                        height: 4
-                        radius: 2
-                        color: "#0a3300"
-                        Rectangle {
-                            width: sinkSlider.visualPosition * parent.width
-                            height: parent.height
-                            radius: parent.radius
-                            color: "#39ff14"
-                        }
-                    }
-                    handle: Rectangle {
-                        x: sinkSlider.leftPadding + sinkSlider.visualPosition * (sinkSlider.availableWidth - width)
-                        y: sinkSlider.topPadding + sinkSlider.availableHeight / 2 - height / 2
-                        width: 10
-                        height: 10
-                        radius: 5
-                        color: "#39ff14"
-                    }
+                    color: "#39ff14"
+                    font.family: "VT323"
+                    font.pixelSize: 6
+                    font.kerning: false
+                    renderType: Text.NativeRendering
                 }
             }
 
-            RowLayout {
+            // ── Quote widget ──────────────────────────────────────────────
+            Item {
                 Layout.fillWidth: true
-                spacing: 10
+                height: Math.max(64, quoteText.contentHeight + 28)
 
-                Text {
-                    text: "IN"
-                    color: "#39ff14"
-                    font.pixelSize: 18
-                    font.family: "VT323"
-                    width: 32
-                    horizontalAlignment: Text.AlignHCenter
+                // Corner-only border
+                Canvas {
+                    id: quoteCorners
+                    anchors.fill: parent
+                    onWidthChanged:  requestPaint()
+                    onHeightChanged: requestPaint()
+                    Component.onCompleted: requestPaint()
+                    onPaint: {
+                        var ctx = getContext("2d")
+                        ctx.clearRect(0, 0, width, height)
+                        ctx.strokeStyle = "#39ff14"
+                        ctx.lineWidth = 1
+                        var c = 12
+                        var w = width - 1, h = height - 1
+
+                        // Top-left
+                        ctx.beginPath()
+                        ctx.moveTo(0, c); ctx.lineTo(0, 0); ctx.lineTo(c, 0)
+                        ctx.stroke()
+                        // Top-right
+                        ctx.beginPath()
+                        ctx.moveTo(w - c, 0); ctx.lineTo(w, 0); ctx.lineTo(w, c)
+                        ctx.stroke()
+                        // Bottom-left
+                        ctx.beginPath()
+                        ctx.moveTo(0, h - c); ctx.lineTo(0, h); ctx.lineTo(c, h)
+                        ctx.stroke()
+                        // Bottom-right
+                        ctx.beginPath()
+                        ctx.moveTo(w - c, h); ctx.lineTo(w, h); ctx.lineTo(w, h - c)
+                        ctx.stroke()
+                    }
                 }
 
-                Slider {
-                    id: sourceSlider
-                    Layout.fillWidth: true
-                    from: 0
-                    to: 1
-                    value: volumePanel.sourceVolume
-                    onMoved: volumePanel.setSourceVolume(value)
-
-                    background: Rectangle {
-                        x: sourceSlider.leftPadding
-                        y: sourceSlider.topPadding + sourceSlider.availableHeight / 2 - height / 2
-                        width: sourceSlider.availableWidth
-                        height: 4
-                        radius: 2
-                        color: "#0a3300"
-                        Rectangle {
-                            width: sourceSlider.visualPosition * parent.width
-                            height: parent.height
-                            radius: parent.radius
-                            color: "#39ff14"
-                        }
-                    }
-                    handle: Rectangle {
-                        x: sourceSlider.leftPadding + sourceSlider.visualPosition * (sourceSlider.availableWidth - width)
-                        y: sourceSlider.topPadding + sourceSlider.availableHeight / 2 - height / 2
-                        width: 10
-                        height: 10
-                        radius: 5
-                        color: "#39ff14"
-                    }
+                Text {
+                    id: quoteText
+                    x: 14
+                    y: 14
+                    width: parent.width - 28
+                    text: settingsPanel.quotes[settingsPanel.quoteIndex]
+                    color: "#1a7a1a"
+                    font.pixelSize: 21 
+                    font.family: "VT323"
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
                 }
             }
 
-            Item { Layout.fillHeight: true }
-
+            // ── Volume section ────────────────────────────────────────────
             Rectangle {
                 Layout.fillWidth: true
-                height: 36
-                radius: 2
-                color: "#000000"
-                border.color: "#0a3300"
+                color: "transparent"
+                border.color: "#1a7a1a"
                 border.width: 1
+                implicitHeight: volLayout.implicitHeight + 24
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "OPEN PAVUCONTROL"
-                    color: "#39ff14"
-                    font.pixelSize: 18
-                    font.family: "VT323"
-                }
+                ColumnLayout {
+                    id: volLayout
+                    anchors {
+                        left: parent.left; right: parent.right
+                        top: parent.top
+                        margins: 12
+                    }
+                    spacing: 10
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        statusBar.volumePanelOpen = false
-                        Quickshell.execDetached(["pavucontrol"])
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 10
+
+                        Text {
+                            text: "OUT"
+                            color: "#39ff14"
+                            font.pixelSize: 18
+                            font.family: "VT323"
+                            width: 28
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+
+                        Item {
+                            id: sinkSliderItem
+                            Layout.fillWidth: true
+                            height: 20
+                            property real sliderValue: settingsPanel.sinkVolume
+
+                            Rectangle {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: parent.width
+                                height: 4
+                                radius: 2
+                                color: "#0a3300"
+                                Rectangle {
+                                    width: parent.width * sinkSliderItem.sliderValue
+                                    height: parent.height
+                                    radius: parent.radius
+                                    color: "#39ff14"
+                                }
+                            }
+                            Rectangle {
+                                x: sinkSliderItem.sliderValue * (parent.width - width)
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 10
+                                height: 10
+                                radius: 5
+                                color: "#39ff14"
+                            }
+                            MouseArea {
+                                id: sinkMA
+                                anchors.fill: parent
+                                function applyX(mx) {
+                                    var v = Math.max(0, Math.min(1, mx / width))
+                                    sinkSliderItem.sliderValue = v
+                                    settingsPanel.setSinkVolume(v)
+                                }
+                                onPressed: (mouse) => applyX(mouse.x)
+                                onPositionChanged: (mouse) => applyX(mouse.x)
+                            }
+                            Connections {
+                                target: settingsPanel
+                                function onSinkVolumeChanged() {
+                                    if (!sinkMA.pressed) sinkSliderItem.sliderValue = settingsPanel.sinkVolume
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 10
+
+                        Text {
+                            text: "IN"
+                            color: "#39ff14"
+                            font.pixelSize: 18
+                            font.family: "VT323"
+                            width: 28
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+
+                        Item {
+                            id: sourceSliderItem
+                            Layout.fillWidth: true
+                            height: 20
+                            property real sliderValue: settingsPanel.sourceVolume
+
+                            Rectangle {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: parent.width
+                                height: 4
+                                radius: 2
+                                color: "#0a3300"
+                                Rectangle {
+                                    width: parent.width * sourceSliderItem.sliderValue
+                                    height: parent.height
+                                    radius: parent.radius
+                                    color: "#39ff14"
+                                }
+                            }
+                            Rectangle {
+                                x: sourceSliderItem.sliderValue * (parent.width - width)
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 10
+                                height: 10
+                                radius: 5
+                                color: "#39ff14"
+                            }
+                            MouseArea {
+                                id: sourceMA
+                                anchors.fill: parent
+                                function applyX(mx) {
+                                    var v = Math.max(0, Math.min(1, mx / width))
+                                    sourceSliderItem.sliderValue = v
+                                    settingsPanel.setSourceVolume(v)
+                                }
+                                onPressed: (mouse) => applyX(mouse.x)
+                                onPositionChanged: (mouse) => applyX(mouse.x)
+                            }
+                            Connections {
+                                target: settingsPanel
+                                function onSourceVolumeChanged() {
+                                    if (!sourceMA.pressed) sourceSliderItem.sliderValue = settingsPanel.sourceVolume
+                                }
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 32
+                        color: "#39ff14"
+                        border.color: "#0a3300"
+                        border.width: 1
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "OPEN VOXCASTER"
+			    color: "#000000"
+                            font.pixelSize: 17
+                            font.family: "VT323"
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                statusBar.settingsPanelOpen = false
+                                Quickshell.execDetached(["pavucontrol"])
+                            }
+                        }
                     }
                 }
             }
 
+            // ── Space for future widgets ──────────────────────────────────
             Item { Layout.fillHeight: true }
         }
 
+        // Green phosphor scanlines
         Canvas {
             anchors.fill: parent
             z: 100
+            enabled: false
             Component.onCompleted: requestPaint()
             onVisibleChanged: if (visible) requestPaint()
             onPaint: {
                 var ctx = getContext("2d")
                 ctx.clearRect(0, 0, width, height)
-                ctx.fillStyle = "rgba(57, 255, 20, 0.10)"
+                ctx.fillStyle = "rgba(57, 255, 20, 0.06)"
+                ctx.fillRect(0, 0, width, height)
+                ctx.fillStyle = "rgba(0, 0, 0, 0.28)"
                 for (var y = 0; y < height; y += 3) {
                     ctx.fillRect(0, y, width, 1)
                 }
@@ -222,6 +361,10 @@ WlrLayershell {
             border.color: "#1a7a1a"
             border.width: 1
             z: 101
+            enabled: false
         }
     }
+
+    VolumeOsd {}
+    WindowTabs {}
 }

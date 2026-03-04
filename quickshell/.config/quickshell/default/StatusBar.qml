@@ -4,10 +4,10 @@ import QtQuick.Layouts
 
 Item {
     id: root
-    property bool volumePanelOpen: false
+    property bool settingsPanelOpen: false
 
-    function toggleVolumePanel() {
-        volumePanelOpen = !volumePanelOpen
+    function toggleSettingsPanel() {
+        settingsPanelOpen = !settingsPanelOpen
     }
 
     RowLayout {
@@ -24,8 +24,8 @@ Item {
 
             TrayWidget {}
 
-            VolumeStatus {
-                onToggleRequested: root.toggleVolumePanel()
+            SettingsButton {
+                onToggleRequested: root.toggleSettingsPanel()
             }
         }
     }
