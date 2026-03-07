@@ -5,6 +5,7 @@ import QtQuick.Layouts
 Item {
     id: root
     property bool settingsPanelOpen: false
+    property bool clockPanelOpen: false
 
     function toggleSettingsPanel() {
         settingsPanelOpen = !settingsPanelOpen
@@ -32,5 +33,6 @@ Item {
 
     ClockWidget {
         anchors.centerIn: parent
+        onToggleRequested: root.clockPanelOpen = !root.clockPanelOpen
     }
 }

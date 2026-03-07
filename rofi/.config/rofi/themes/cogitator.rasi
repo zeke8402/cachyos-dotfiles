@@ -1,0 +1,147 @@
+// ── Cogitator — Rofi Theme ────────────────────────────────────────────────
+// Warhammer 40k machine-spirit aesthetic. Black, phosphor green, no rounding.
+// Layout: input bar fixed at bottom, results stack upward above it.
+
+* {
+    bg:         #000000;
+    green-hi:   #39ff14;
+    green-mid:  #1a7a1a;
+    green-dim:  #0a3300;
+
+    background-color:   transparent;
+    text-color:         @green-mid;
+    border-color:       @green-mid;
+    font:               "VT323 22";
+}
+
+// ── Window ────────────────────────────────────────────────────────────────
+window {
+    background-color:   @bg;
+    border:             1px solid;
+    border-color:       @green-mid;
+    border-radius:      0;
+    width:              700px;
+    location:           south;
+    anchor:             south;
+    y-offset:           -40px;
+    padding:            0;
+    cursor:             default;
+}
+
+// ── Main container — list on top, input on bottom ─────────────────────────
+mainbox {
+    background-color:   transparent;
+    children:           [ listview, inputbar ];
+    spacing:            0;
+    padding:            0;
+}
+
+// ── Results list ──────────────────────────────────────────────────────────
+listview {
+    background-color:   transparent;
+    // Bottom border acts as separator between list and inputbar
+    border:             0px 0px 1px 0px;
+    border-color:       @green-mid;
+    padding:            6px 0px;
+    spacing:            0;
+    // reverse: best match at bottom of list, closest to the input bar
+    reverse:            true;
+    lines:              12;
+    fixed-height:       false;
+    columns:            1;
+    scrollbar:          false;
+}
+
+// ── Individual result rows ────────────────────────────────────────────────
+element {
+    background-color:   transparent;
+    border-radius:      0;
+    padding:            4px 16px;
+    cursor:             pointer;
+    spacing:            0;
+}
+
+element.normal.normal {
+    background-color:   transparent;
+    text-color:         @green-mid;
+}
+
+element.normal.urgent {
+    text-color:         @green-hi;
+}
+
+element.normal.active {
+    text-color:         @green-hi;
+}
+
+element.selected.normal {
+    background-color:   @bg;
+    text-color:         @green-hi;
+    border:             0px 0px 0px 3px;
+    border-color:       @green-hi;
+}
+
+element.selected.urgent {
+    background-color:   @bg;
+    text-color:         @green-hi;
+    border:             0px 0px 0px 3px;
+    border-color:       @green-hi;
+}
+
+element.selected.active {
+    background-color:   @bg;
+    text-color:         @green-hi;
+    border:             0px 0px 0px 3px;
+    border-color:       @green-hi;
+}
+
+element-text {
+    background-color:   transparent;
+    text-color:         inherit;
+    highlight:          bold #39ff14;
+    cursor:             inherit;
+}
+
+// ── Input bar ─────────────────────────────────────────────────────────────
+inputbar {
+    background-color:   transparent;
+    padding:            10px 16px;
+    spacing:            10px;
+    children:           [ prompt, entry ];
+}
+
+prompt {
+    background-color:   transparent;
+    text-color:         @green-hi;
+    enabled:            true;
+}
+
+entry {
+    background-color:   transparent;
+    text-color:         @green-hi;
+    cursor-color:       @green-hi;
+    placeholder:        "QUERY THE COGITATOR...";
+    placeholder-color:  @green-dim;
+    cursor:             text;
+}
+
+// ── Suppress unused widgets ───────────────────────────────────────────────
+num-filtered-rows {
+    enabled: false;
+}
+
+num-rows {
+    enabled: false;
+}
+
+textbox-num-sep {
+    enabled: false;
+}
+
+case-indicator {
+    enabled: false;
+}
+
+scrollbar {
+    enabled: false;
+}

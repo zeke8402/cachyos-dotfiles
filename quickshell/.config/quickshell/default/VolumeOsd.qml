@@ -41,10 +41,7 @@ Scope {
 
             Rectangle {
                 anchors.fill: parent
-                radius: height / 2
-                color: "#dd000000"
-                border.color: "#1a7a1a"
-                border.width: 1
+                color: "#000000"
 
                 RowLayout {
                     anchors.fill: parent
@@ -94,7 +91,6 @@ Scope {
                     Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: 6
-                        radius: 3
                         color: "#0a3300"
 
                         Rectangle {
@@ -102,9 +98,53 @@ Scope {
                             anchors.top: parent.top
                             anchors.bottom: parent.bottom
                             implicitWidth: parent.width * root.sinkVolume
-                            radius: parent.radius
                             color: "#39ff14"
                         }
+                    }
+                }
+
+                Canvas {
+                    anchors.fill: parent
+                    z: 100
+                    enabled: false
+                    Component.onCompleted: requestPaint()
+                    onVisibleChanged: if (visible) requestPaint()
+                    onPaint: {
+                        var ctx = getContext("2d")
+                        ctx.clearRect(0, 0, width, height)
+                        ctx.fillStyle = "rgba(57, 255, 20, 0.12)"
+                        ctx.fillRect(0, 0, width, height)
+                        ctx.fillStyle = "rgba(0, 0, 0, 0.45)"
+                        for (var y = 0; y < height; y += 3)
+                            ctx.fillRect(0, y, width, 1)
+                    }
+                }
+
+                Canvas {
+                    anchors.fill: parent
+                    z: 101
+                    enabled: false
+                    Component.onCompleted: requestPaint()
+                    onPaint: {
+                        var ctx = getContext("2d")
+                        ctx.clearRect(0, 0, width, height)
+                        ctx.strokeStyle = "#39ff14"
+                        ctx.lineWidth = 1.5
+                        var c = 10
+                        var w = width - 1, h = height - 1
+
+                        ctx.beginPath()
+                        ctx.moveTo(0, c); ctx.lineTo(0, 0); ctx.lineTo(c, 0)
+                        ctx.stroke()
+                        ctx.beginPath()
+                        ctx.moveTo(w - c, 0); ctx.lineTo(w, 0); ctx.lineTo(w, c)
+                        ctx.stroke()
+                        ctx.beginPath()
+                        ctx.moveTo(0, h - c); ctx.lineTo(0, h); ctx.lineTo(c, h)
+                        ctx.stroke()
+                        ctx.beginPath()
+                        ctx.moveTo(w - c, h); ctx.lineTo(w, h); ctx.lineTo(w, h - c)
+                        ctx.stroke()
                     }
                 }
             }

@@ -1,0 +1,11 @@
+configuration {
+    modi:                "drun";
+    show-icons:          true;
+    drun-display-format: "{name}";
+    case-sensitive:      false;
+    matching:            "fuzzy";
+    sort:                true;
+    prompt:              ">";
+}
+
+@theme "~/.config/rofi/themes/cogitator"

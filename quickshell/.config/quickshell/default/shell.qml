@@ -55,6 +55,20 @@ Scope {
         onCleared: statusBar.settingsPanelOpen = false
     }
 
+    ClockPanel {
+        id: clockPanel
+        open: statusBar.clockPanelOpen
+        statusBarHeight: statusBar.height
+        screenWidth: statusBar.width
+        onCloseRequested: statusBar.clockPanelOpen = false
+    }
+
+    HyprlandFocusGrab {
+        active: statusBar.clockPanelOpen
+        windows: [clockPanel]
+        onCleared: statusBar.clockPanelOpen = false
+    }
+
     VolumeOsd {}
     WindowTabs {}
 }
