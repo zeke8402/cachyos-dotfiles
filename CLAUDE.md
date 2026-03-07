@@ -46,8 +46,16 @@ The backend only drives the UI when the user isn't actively holding the control.
 
 ```
 shell.qml            Root. Loads fonts. Creates WlrLayershell (statusbar) and
-                     PanelWindow (settings panel) as Scope-level siblings.
-                     Also instantiates VolumeOsd and WindowTabs.
+                     instantiates SettingsPanel, VolumeOsd, and WindowTabs as
+                     Scope-level siblings.
+
+SettingsPanel.qml    Settings PanelWindow. AM logo, Darktide quote, volume sliders
+                     (OUT/IN), output device selector (SPEAKERS/HEADSET), and
+                     OPEN VOXCASTER button. Owns its own PwObjectTracker.
+                     Exposes `open` (bool), `statusBarHeight` (real), and
+                     `closeRequested` signal so shell.qml can bind it to StatusBar
+                     without a direct reference. Imports darktide_quotes.js and
+                     config.js directly.
 
 StatusBar.qml        Statusbar content: WorkspaceWidget, ClockWidget (centered),
                      TrayWidget, SettingsButton. Owns `settingsPanelOpen` bool
@@ -79,8 +87,9 @@ WindowTabs.qml       Variants driven by focusedWorkspace.toplevels. One PanelWin
 VolumeStatus.qml     UNUSED — superseded by SettingsButton.qml. Safe to delete.
 
 darktide_quotes.txt  Raw source list, one quote per line. Not used directly at runtime.
-darktide_quotes.js   Generated JS library (`python3` from the .txt). Imported in shell.qml
-                     as `DarktideQuotes`. Contains 192 Warhammer 40k loading screen
+darktide_quotes.js   Generated JS library (`python3` from the .txt). Imported in
+                     SettingsPanel.qml as `DarktideQuotes`. Contains 192 Warhammer
+                     40k loading screen
                      quotes from Darktide. To regenerate after editing the txt:
                        python3 -c "
                        import json
@@ -88,7 +97,42 @@ darktide_quotes.js   Generated JS library (`python3` from the .txt). Imported in
                        open('darktide_quotes.js','w').write('.pragma library\nvar quotes = ' + json.dumps(q, indent=4) + '\n')
                        "
                      Source: https://gist.github.com/pmarreck/1548c09877ac012ed181fa067fd9b1d7
+
+config.example.js    Committed template for machine-local config. Documents the
+                     variables needed (speakerSink, headsetSink). Copy to config.js
+                     and fill in your pactl sink names (`pactl list sinks short`).
+
+config.js            Machine-local config — gitignored, never committed. Imported
+                     in SettingsPanel.qml as `Config`. Defines speakerSink and
+                     headsetSink pactl sink name strings.
 ```
+
+---
+
+## Finding audio device names
+
+To populate `config.js`, you need the internal PipeWire/PulseAudio sink names — not the human-readable descriptions.
+
+**Quick list (names only):**
+```
+pactl list sinks short
+```
+Outputs columns: `id  name  driver  format  state`. The `name` column is what goes in `config.js`.
+
+**With descriptions (to identify which is which):**
+```
+pactl list sinks | grep -E "(Name:|Description:)"
+```
+
+**Example output:**
+```
+Name: alsa_output.usb-Focusrite_Scarlett_2i2_USB_...-00.HiFi__Line__sink
+Description: Scarlett 2i2 3rd Gen Headphones / Line 1-2
+Name: alsa_output.usb-Corsair_CORSAIR_VOID_ELITE_...-00.analog-stereo
+Description: CORSAIR VOID ELITE Wireless Gaming Dongle Analog Stereo
+```
+
+Copy the `Name:` value (without the `Name: ` prefix) into `config.js`. USB devices include the device serial number in the name so they are stable across reboots. PCI devices (onboard audio, HDMI) are stable by slot.
 
 ---
 
