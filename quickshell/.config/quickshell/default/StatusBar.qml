@@ -4,12 +4,8 @@ import QtQuick.Layouts
 
 Item {
     id: root
-    property bool settingsPanelOpen: false
-    property bool clockPanelOpen: false
-
-    function toggleSettingsPanel() {
-        settingsPanelOpen = !settingsPanelOpen
-    }
+    signal settingsToggleRequested()
+    signal clockToggleRequested()
 
     RowLayout {
         anchors.fill: parent
@@ -26,13 +22,13 @@ Item {
             TrayWidget {}
 
             SettingsButton {
-                onToggleRequested: root.toggleSettingsPanel()
+                onToggleRequested: root.settingsToggleRequested()
             }
         }
     }
 
     ClockWidget {
         anchors.centerIn: parent
-        onToggleRequested: root.clockPanelOpen = !root.clockPanelOpen
+        onToggleRequested: root.clockToggleRequested()
     }
 }

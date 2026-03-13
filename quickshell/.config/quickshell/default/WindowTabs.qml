@@ -8,7 +8,7 @@ Variants {
 
     readonly property list<string> sanctioned: ["kitty", "dolphin", "fuzzel"]
 
-    model: Hyprland.focusedWorkspace !== null ? Hyprland.focusedWorkspace.toplevels : []
+    model: Hyprland.focusedWorkspace?.toplevels?.values ?? []
 
     PanelWindow {
         id: tab
