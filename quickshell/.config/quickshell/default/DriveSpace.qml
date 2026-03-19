@@ -7,7 +7,7 @@ Rectangle {
     id: root
     Layout.fillWidth: true
     color: "transparent"
-    border.color: "#1a7a1a"
+    border.color: Theme.accentMed
     border.width: 1
     implicitHeight: driveLayout.implicitHeight + 24
 
@@ -22,8 +22,6 @@ Rectangle {
         blockLoading: true
     }
 
-    // Parse fstab and build labelMap.
-    // Include: LABEL= entries (label is the name) and mount point / (label "system").
     function parseFstab() {
         var map = {}
         var lines = fstabFile.text().split("\n")
@@ -97,8 +95,8 @@ Rectangle {
 
         Text {
             text: "STORAGE"
-            color: "#39ff14"
-            font.family: "VT323"
+            color: Theme.accent
+            font.family: Theme.fontMono
             font.pixelSize: 16
             font.letterSpacing: 2
         }
@@ -115,8 +113,8 @@ Rectangle {
 
                     Text {
                         text: modelData.label
-                        color: "#1a7a1a"
-                        font.family: "VT323"
+                        color: Theme.accentMed
+                        font.family: Theme.fontMono
                         font.pixelSize: 15
                         Layout.fillWidth: true
                         elide: Text.ElideRight
@@ -124,8 +122,8 @@ Rectangle {
 
                     Text {
                         text: modelData.pct + "%"
-                        color: modelData.pct >= 90 ? "#cc4400" : "#39ff14"
-                        font.family: "VT323"
+                        color: modelData.pct >= 90 ? Theme.warning : Theme.accent
+                        font.family: Theme.fontMono
                         font.pixelSize: 15
                     }
                 }
@@ -136,13 +134,13 @@ Rectangle {
 
                     Rectangle {
                         anchors.fill: parent
-                        color: "#0a3300"
+                        color: Theme.accentDim
                     }
 
                     Rectangle {
                         width: parent.width * (modelData.pct / 100)
                         height: parent.height
-                        color: modelData.pct >= 90 ? "#cc4400" : "#39ff14"
+                        color: modelData.pct >= 90 ? Theme.warning : Theme.accent
                     }
                 }
             }

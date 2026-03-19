@@ -41,7 +41,7 @@ Scope {
 
             Rectangle {
                 anchors.fill: parent
-                color: "#000000"
+                color: Theme.background
 
                 RowLayout {
                     anchors.fill: parent
@@ -52,17 +52,20 @@ Scope {
                         id: speakerIcon
                         implicitWidth: 30
                         implicitHeight: 30
+
+                        Connections {
+                            target: Theme
+                            function onThemeApplied() { speakerIcon.requestPaint() }
+                        }
+
                         onPaint: {
                             var ctx = getContext("2d")
                             ctx.clearRect(0, 0, width, height)
-                            ctx.fillStyle = "#39ff14"
-                            ctx.strokeStyle = "#39ff14"
+                            ctx.fillStyle   = Theme.accent.toString()
+                            ctx.strokeStyle = Theme.accent.toString()
                             ctx.lineWidth = 2.2
 
-                            var bx = 4
-                            var by = 11
-                            var bw = 6
-                            var bh = 8
+                            var bx = 4, by = 11, bw = 6, bh = 8
                             var mx = bx + bw
                             var cy = by + bh / 2
 
@@ -91,44 +94,64 @@ Scope {
                     Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: 6
-                        color: "#0a3300"
+                        color: Theme.accentDim
 
                         Rectangle {
                             anchors.left: parent.left
                             anchors.top: parent.top
                             anchors.bottom: parent.bottom
                             implicitWidth: parent.width * root.sinkVolume
-                            color: "#39ff14"
+                            color: Theme.accent
                         }
                     }
                 }
 
+                // Scanlines overlay
                 Canvas {
+                    id: scanlineCanvas
                     anchors.fill: parent
                     z: 100
                     enabled: false
+                    visible: Theme.scanlines
                     Component.onCompleted: requestPaint()
                     onVisibleChanged: if (visible) requestPaint()
+
+                    Connections {
+                        target: Theme
+                        function onThemeApplied() { scanlineCanvas.requestPaint() }
+                    }
+
                     onPaint: {
                         var ctx = getContext("2d")
                         ctx.clearRect(0, 0, width, height)
-                        ctx.fillStyle = "rgba(57, 255, 20, 0.12)"
+                        var r = Math.round(Theme.accent.r * 255)
+                        var g = Math.round(Theme.accent.g * 255)
+                        var b = Math.round(Theme.accent.b * 255)
+                        ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ",0.12)"
                         ctx.fillRect(0, 0, width, height)
-                        ctx.fillStyle = "rgba(0, 0, 0, 0.45)"
+                        ctx.fillStyle = "rgba(0,0,0,0.45)"
                         for (var y = 0; y < height; y += 3)
                             ctx.fillRect(0, y, width, 1)
                     }
                 }
 
+                // Tacbracks (corner brackets)
                 Canvas {
+                    id: tacbracksCanvas
                     anchors.fill: parent
                     z: 101
                     enabled: false
                     Component.onCompleted: requestPaint()
+
+                    Connections {
+                        target: Theme
+                        function onThemeApplied() { tacbracksCanvas.requestPaint() }
+                    }
+
                     onPaint: {
                         var ctx = getContext("2d")
                         ctx.clearRect(0, 0, width, height)
-                        ctx.strokeStyle = "#39ff14"
+                        ctx.strokeStyle = Theme.accent.toString()
                         ctx.lineWidth = 1.5
                         var c = 10
                         var w = width - 1, h = height - 1

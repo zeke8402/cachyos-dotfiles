@@ -32,7 +32,7 @@ RowLayout {
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     colorization: 1.0
-                    colorizationColor: "#39ff14"
+                    colorizationColor: Theme.accent
                 }
             }
 

@@ -16,7 +16,7 @@ PanelWindow {
 
     implicitWidth: 620
     implicitHeight: 318
-    color: "#000000"
+    color: Theme.background
 
     anchors {
         top: true
@@ -153,9 +153,9 @@ PanelWindow {
                                 Text {
                                     anchors.centerIn: parent
                                     text: "<"
-                                    color: "#39ff14"
+                                    color: Theme.accent
                                     font.pixelSize: 22
-                                    font.family: "VT323"
+                                    font.family: Theme.fontMono
                                 }
                                 MouseArea {
                                     anchors.fill: parent
@@ -168,9 +168,9 @@ PanelWindow {
 
                             Text {
                                 text: clockPanel.monthLabel
-                                color: "#39ff14"
+                                color: Theme.accent
                                 font.pixelSize: 20
-                                font.family: "VT323"
+                                font.family: Theme.fontMono
                                 horizontalAlignment: Text.AlignHCenter
                             }
 
@@ -181,9 +181,9 @@ PanelWindow {
                                 Text {
                                     anchors.centerIn: parent
                                     text: ">"
-                                    color: "#39ff14"
+                                    color: Theme.accent
                                     font.pixelSize: 22
-                                    font.family: "VT323"
+                                    font.family: Theme.fontMono
                                 }
                                 MouseArea {
                                     anchors.fill: parent
@@ -201,9 +201,9 @@ PanelWindow {
                                 Text {
                                     width: calLayout.width / 7
                                     text: modelData
-                                    color: "#1a7a1a"
+                                    color: Theme.accentMed
                                     font.pixelSize: 15
-                                    font.family: "VT323"
+                                    font.family: Theme.fontMono
                                     horizontalAlignment: Text.AlignHCenter
                                 }
                             }
@@ -227,19 +227,19 @@ PanelWindow {
                                         visible: modelData.isToday
                                         anchors.centerIn: parent
                                         width: 26; height: 26
-                                        color: "#040f04"
-                                        border.color: "#39ff14"
+                                        color: Theme.accentBg
+                                        border.color: Theme.accent
                                         border.width: 1
                                     }
 
                                     Text {
                                         anchors.centerIn: parent
                                         text: modelData.day
-                                        color: modelData.isToday ? "#39ff14"
-                                             : modelData.inMonth ? "#1a7a1a"
-                                             : "#0a3300"
+                                        color: modelData.isToday ? Theme.accent
+                                             : modelData.inMonth ? Theme.accentMed
+                                             : Theme.accentDim
                                         font.pixelSize: 18
-                                        font.family: "VT323"
+                                        font.family: Theme.fontMono
                                     }
                                 }
                             }
@@ -253,7 +253,7 @@ PanelWindow {
                     Layout.fillHeight: true
                     Layout.topMargin: 16
                     Layout.bottomMargin: 16
-                    color: "#1a7a1a"
+                    color: Theme.accentMed
                 }
 
                 // ── Neofetch column ───────────────────────────────────────
@@ -271,9 +271,9 @@ PanelWindow {
                         y: neofetchPane.scrollY + 10
                         width: parent.width - 24
                         text: clockPanel.neofetchOutput
-                        color: "#39ff14"
+                        color: Theme.accent
                         font.pixelSize: 13
-                        font.family: "VT323"
+                        font.family: Theme.fontMono
                         renderType: Text.NativeRendering
                         wrapMode: Text.NoWrap
                     }
@@ -293,17 +293,28 @@ PanelWindow {
 
             // ── Scanlines ─────────────────────────────────────────────────
             Canvas {
+                id: clockScanlines
                 anchors.fill: parent
                 z: 100
                 enabled: false
+                visible: Theme.scanlines
                 Component.onCompleted: requestPaint()
                 onVisibleChanged: if (visible) requestPaint()
+
+                Connections {
+                    target: Theme
+                    function onThemeApplied() { clockScanlines.requestPaint() }
+                }
+
                 onPaint: {
                     var ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
-                    ctx.fillStyle = "rgba(57, 255, 20, 0.06)"
+                    var r = Math.round(Theme.accent.r * 255)
+                    var g = Math.round(Theme.accent.g * 255)
+                    var b = Math.round(Theme.accent.b * 255)
+                    ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ",0.06)"
                     ctx.fillRect(0, 0, width, height)
-                    ctx.fillStyle = "rgba(0, 0, 0, 0.28)"
+                    ctx.fillStyle = "rgba(0,0,0,0.28)"
                     for (var y = 0; y < height; y += 3)
                         ctx.fillRect(0, y, width, 1)
                 }
@@ -312,7 +323,7 @@ PanelWindow {
             Rectangle {
                 anchors.fill: parent
                 color: "transparent"
-                border.color: "#1a7a1a"
+                border.color: Theme.accentMed
                 border.width: 1
                 z: 101
                 enabled: false

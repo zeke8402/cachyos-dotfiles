@@ -14,9 +14,9 @@ Item {
         id: label
         anchors.centerIn: parent
         text: Qt.formatDateTime(root.now, "dddd MMMM d  HH:mm:ss")
-        color: "#39ff14"
+        color: Theme.accent
         font.pixelSize: 24
-        font.family: "VT323"
+        font.family: Theme.fontMono
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         renderType: Text.NativeRendering

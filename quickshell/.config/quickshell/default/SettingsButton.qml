@@ -13,8 +13,8 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 2
-        color: "#000000"
-        border.color: "#1a7a1a"
+        color: Theme.background
+        border.color: Theme.accentMed
         border.width: 1
 
         Canvas {
@@ -24,8 +24,8 @@ Item {
             onPaint: {
                 var ctx = getContext("2d")
                 ctx.clearRect(0, 0, width, height)
-                ctx.strokeStyle = "#39ff14"
-                ctx.fillStyle = "#39ff14"
+                ctx.strokeStyle = Theme.accent.toString()
+                ctx.fillStyle   = Theme.accent.toString()
                 ctx.lineWidth = 1.5
 
                 var lines = [
@@ -42,15 +42,14 @@ Item {
                     ctx.lineTo(width, y)
                     ctx.stroke()
 
-                    // Knob: black fill punches through the line, green outline on top
                     ctx.beginPath()
                     ctx.arc(kx, y, 2.5, 0, Math.PI * 2)
-                    ctx.fillStyle = "#000000"
+                    ctx.fillStyle = Theme.background.toString()
                     ctx.fill()
-                    ctx.strokeStyle = "#39ff14"
+                    ctx.strokeStyle = Theme.accent.toString()
                     ctx.stroke()
-                    ctx.fillStyle  = "#39ff14"
-                    ctx.strokeStyle = "#39ff14"
+                    ctx.fillStyle   = Theme.accent.toString()
+                    ctx.strokeStyle = Theme.accent.toString()
                 }
             }
         }

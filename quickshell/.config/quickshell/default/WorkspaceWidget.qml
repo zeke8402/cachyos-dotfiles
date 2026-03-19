@@ -41,8 +41,8 @@ RowLayout {
             Rectangle {
                 anchors.fill: parent
                 radius: 2
-                color: isActive ? "#040f04" : "#000000"
-                border.color: isActive ? "#39ff14" : (isOccupied ? "#1a7a1a" : "#0a3300")
+                color: isActive ? Theme.accentBg : Theme.background
+                border.color: isActive ? Theme.accent : (isOccupied ? Theme.accentMed : Theme.accentDim)
                 border.width: isActive ? 3 : 2
             }
 
@@ -52,11 +52,11 @@ RowLayout {
                 anchors.verticalCenterOffset: 3
                 anchors.horizontalCenterOffset: 1
                 text: workspaceRow.toRoman(index + 1)
-                color: isActive ? "#39ff14" : (isOccupied ? "#1a7a1a" : "#0a3300")
+                color: isActive ? Theme.accent : (isOccupied ? Theme.accentMed : Theme.accentDim)
                 font {
                     pixelSize: 11
                     bold: true
-                    family: "First Legion"
+                    family: Theme.fontDisplay
                 }
             }
 

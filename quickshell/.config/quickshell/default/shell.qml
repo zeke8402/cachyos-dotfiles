@@ -14,6 +14,16 @@ Scope {
         id: shellState
         property bool settingsPanelOpen: false
         property bool clockPanelOpen: false
+        property bool themeSwitcherOpen: false
+    }
+
+    // ── IPC handler — allows `qs ipc call default themeToggle` from hyprland
+    IpcHandler {
+        target: "themeToggle"
+        function onMessage(message: string, reply: var) {
+            shellState.themeSwitcherOpen = !shellState.themeSwitcherOpen
+            reply("")
+        }
     }
 
     Variants {
@@ -29,7 +39,7 @@ Scope {
             anchors.left: true
             anchors.right: true
             implicitHeight: 40
-            color: "#000000"
+            color: Theme.background
 
             StatusBar {
                 anchors.fill: parent
@@ -37,20 +47,30 @@ Scope {
                 onClockToggleRequested: shellState.clockPanelOpen = !shellState.clockPanelOpen
             }
 
-            // Scanline overlay — simulates phosphor CRT screen artifacts
+            // Scanline overlay — simulates CRT phosphor artifacts
             Canvas {
+                id: statusBarScanlines
                 anchors.fill: parent
                 z: 100
                 enabled: false
+                visible: Theme.scanlines
+
+                Connections {
+                    target: Theme
+                    function onThemeApplied() { statusBarScanlines.requestPaint() }
+                }
+
                 onPaint: {
                     var ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
-                    ctx.fillStyle = "rgba(57, 255, 20, 0.06)"
+                    var r = Math.round(Theme.accent.r * 255)
+                    var g = Math.round(Theme.accent.g * 255)
+                    var b = Math.round(Theme.accent.b * 255)
+                    ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ",0.06)"
                     ctx.fillRect(0, 0, width, height)
-                    ctx.fillStyle = "rgba(0, 0, 0, 0.28)"
-                    for (var y = 0; y < height; y += 3) {
+                    ctx.fillStyle = "rgba(0,0,0,0.28)"
+                    for (var y = 0; y < height; y += 3)
                         ctx.fillRect(0, y, width, 1)
-                    }
                 }
             }
         }
@@ -83,6 +103,17 @@ Scope {
         onCleared: shellState.clockPanelOpen = false
     }
 
+    ThemeSwitcher {
+        id: themeSwitcher
+        open: shellState.themeSwitcherOpen
+        onCloseRequested: shellState.themeSwitcherOpen = false
+    }
+
+    HyprlandFocusGrab {
+        active: shellState.themeSwitcherOpen
+        windows: [themeSwitcher]
+        onCleared: shellState.themeSwitcherOpen = false
+    }
+
     VolumeOsd {}
-    // WindowTabs {}
 }

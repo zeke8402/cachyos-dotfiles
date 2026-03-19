@@ -13,17 +13,16 @@ PanelWindow {
     property real statusBarHeight: 0
     signal closeRequested()
 
-    // Visibility is managed manually so we can delay hide until close animation finishes
     visible: _shown
     property bool _shown: false
 
     implicitWidth: 500
     implicitHeight: 780
-    color: "#000000"
+    color: Theme.background
 
     onOpenChanged: {
         if (open) {
-            content.x = settingsPanel.implicitWidth  // start off-screen right
+            content.x = settingsPanel.implicitWidth
             _shown = true
             slideIn.restart()
         } else {
@@ -112,8 +111,8 @@ PanelWindow {
                     anchors.topMargin: 4
                     text: logoFile.text()
 
-                    color: "#39ff14"
-                    font.family: "VT323"
+                    color: Theme.accent
+                    font.family: Theme.fontMono
                     font.pixelSize: 6
                     font.kerning: false
                     renderType: Text.NativeRendering
@@ -131,10 +130,16 @@ PanelWindow {
                     onWidthChanged:  requestPaint()
                     onHeightChanged: requestPaint()
                     Component.onCompleted: requestPaint()
+
+                    Connections {
+                        target: Theme
+                        function onThemeApplied() { quoteCorners.requestPaint() }
+                    }
+
                     onPaint: {
                         var ctx = getContext("2d")
                         ctx.clearRect(0, 0, width, height)
-                        ctx.strokeStyle = "#39ff14"
+                        ctx.strokeStyle = Theme.accent.toString()
                         ctx.lineWidth = 1
                         var c = 12
                         var w = width - 1, h = height - 1
@@ -160,9 +165,9 @@ PanelWindow {
                     y: 14
                     width: parent.width - 28
                     text: settingsPanel.quotes[settingsPanel.quoteIndex]
-                    color: "#1a7a1a"
+                    color: Theme.accentMed
                     font.pixelSize: 21
-                    font.family: "VT323"
+                    font.family: Theme.fontMono
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -172,7 +177,7 @@ PanelWindow {
             Rectangle {
                 Layout.fillWidth: true
                 color: "transparent"
-                border.color: "#1a7a1a"
+                border.color: Theme.accentMed
                 border.width: 1
                 implicitHeight: volLayout.implicitHeight + 24
 
@@ -191,9 +196,9 @@ PanelWindow {
 
                         Text {
                             text: "OUT"
-                            color: "#39ff14"
+                            color: Theme.accent
                             font.pixelSize: 18
-                            font.family: "VT323"
+                            font.family: Theme.fontMono
                             width: 28
                             horizontalAlignment: Text.AlignHCenter
                         }
@@ -209,21 +214,19 @@ PanelWindow {
                                 width: parent.width
                                 height: 4
                                 radius: 2
-                                color: "#0a3300"
+                                color: Theme.accentDim
                                 Rectangle {
                                     width: parent.width * sinkSliderItem.sliderValue
                                     height: parent.height
                                     radius: parent.radius
-                                    color: "#39ff14"
+                                    color: Theme.accent
                                 }
                             }
                             Rectangle {
                                 x: sinkSliderItem.sliderValue * (parent.width - width)
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: 10
-                                height: 10
-                                radius: 5
-                                color: "#39ff14"
+                                width: 10; height: 10; radius: 5
+                                color: Theme.accent
                             }
                             MouseArea {
                                 id: sinkMA
@@ -251,9 +254,9 @@ PanelWindow {
 
                         Text {
                             text: "IN"
-                            color: "#39ff14"
+                            color: Theme.accent
                             font.pixelSize: 18
-                            font.family: "VT323"
+                            font.family: Theme.fontMono
                             width: 28
                             horizontalAlignment: Text.AlignHCenter
                         }
@@ -269,21 +272,19 @@ PanelWindow {
                                 width: parent.width
                                 height: 4
                                 radius: 2
-                                color: "#0a3300"
+                                color: Theme.accentDim
                                 Rectangle {
                                     width: parent.width * sourceSliderItem.sliderValue
                                     height: parent.height
                                     radius: parent.radius
-                                    color: "#39ff14"
+                                    color: Theme.accent
                                 }
                             }
                             Rectangle {
                                 x: sourceSliderItem.sliderValue * (parent.width - width)
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: 10
-                                height: 10
-                                radius: 5
-                                color: "#39ff14"
+                                width: 10; height: 10; radius: 5
+                                color: Theme.accent
                             }
                             MouseArea {
                                 id: sourceMA
@@ -315,18 +316,17 @@ PanelWindow {
                         Rectangle {
                             Layout.fillWidth: true
                             height: 32
-                            color: parent.activeSink === Config.speakerSink ? "#39ff14" : "#000000"
-                            border.color: "#39ff14"
+                            color: parent.activeSink === Config.speakerSink ? Theme.accent : Theme.background
+                            border.color: Theme.accent
                             border.width: 1
 
                             Text {
                                 anchors.centerIn: parent
                                 text: "SPEAKERS"
-                                color: parent.parent.activeSink === Config.speakerSink ? "#000000" : "#39ff14"
+                                color: parent.parent.activeSink === Config.speakerSink ? Theme.background : Theme.accent
                                 font.pixelSize: 17
-                                font.family: "VT323"
+                                font.family: Theme.fontMono
                             }
-
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: Quickshell.execDetached(["pactl", "set-default-sink", Config.speakerSink])
@@ -336,18 +336,17 @@ PanelWindow {
                         Rectangle {
                             Layout.fillWidth: true
                             height: 32
-                            color: parent.activeSink === Config.headsetSink ? "#39ff14" : "#000000"
-                            border.color: "#39ff14"
+                            color: parent.activeSink === Config.headsetSink ? Theme.accent : Theme.background
+                            border.color: Theme.accent
                             border.width: 1
 
                             Text {
                                 anchors.centerIn: parent
                                 text: "HEADSET"
-                                color: parent.parent.activeSink === Config.headsetSink ? "#000000" : "#39ff14"
+                                color: parent.parent.activeSink === Config.headsetSink ? Theme.background : Theme.accent
                                 font.pixelSize: 17
-                                font.family: "VT323"
+                                font.family: Theme.fontMono
                             }
-
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: Quickshell.execDetached(["pactl", "set-default-sink", Config.headsetSink])
@@ -358,18 +357,17 @@ PanelWindow {
                     Rectangle {
                         Layout.fillWidth: true
                         height: 32
-                        color: "#39ff14"
-                        border.color: "#0a3300"
+                        color: Theme.accent
+                        border.color: Theme.accentDim
                         border.width: 1
 
                         Text {
                             anchors.centerIn: parent
                             text: "OPEN VOXCASTER"
-                            color: "#000000"
+                            color: Theme.background
                             font.pixelSize: 17
-                            font.family: "VT323"
+                            font.family: Theme.fontMono
                         }
-
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
@@ -384,33 +382,42 @@ PanelWindow {
             // ── Drive space ───────────────────────────────────────────────
             DriveSpace {}
 
-            // ── Space for future widgets ──────────────────────────────────
             Item { Layout.fillHeight: true }
         }
 
-        // Green phosphor scanlines
+        // Scanlines
         Canvas {
+            id: settingsScanlines
             anchors.fill: parent
             z: 100
             enabled: false
+            visible: Theme.scanlines
             Component.onCompleted: requestPaint()
             onVisibleChanged: if (visible) requestPaint()
+
+            Connections {
+                target: Theme
+                function onThemeApplied() { settingsScanlines.requestPaint() }
+            }
+
             onPaint: {
                 var ctx = getContext("2d")
                 ctx.clearRect(0, 0, width, height)
-                ctx.fillStyle = "rgba(57, 255, 20, 0.06)"
+                var r = Math.round(Theme.accent.r * 255)
+                var g = Math.round(Theme.accent.g * 255)
+                var b = Math.round(Theme.accent.b * 255)
+                ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ",0.06)"
                 ctx.fillRect(0, 0, width, height)
-                ctx.fillStyle = "rgba(0, 0, 0, 0.28)"
-                for (var y = 0; y < height; y += 3) {
+                ctx.fillStyle = "rgba(0,0,0,0.28)"
+                for (var y = 0; y < height; y += 3)
                     ctx.fillRect(0, y, width, 1)
-                }
             }
         }
 
         Rectangle {
             anchors.fill: parent
             color: "transparent"
-            border.color: "#1a7a1a"
+            border.color: Theme.accentMed
             border.width: 1
             z: 101
             enabled: false

@@ -1,0 +1,28 @@
+{
+  "id": "nier",
+  "name": "YORHA UNIT",
+  "colors": {
+    "accent":     "#c8b89a",
+    "accentMed":  "#8b7d6b",
+    "accentDim":  "#3d3530",
+    "accentBg":   "#15120e",
+    "background": "#0a0a08",
+    "warning":    "#e8c84a",
+    "warningDim": "#6b5a20"
+  },
+  "fonts": {
+    "display": "VT323",
+    "mono":    "VT323"
+  },
+  "hyprland": {
+    "activeBorder":    "rgba(c8b89aff)",
+    "inactiveBorder":  "rgba(3d353088)",
+    "borderSize":      2,
+    "rounding":        0,
+    "sanctionedBorder":"rgba(c8b89aff) rgba(8b7d6bff) 45deg"
+  },
+  "effects": {
+    "scanlines": false,
+    "tacbracks": true
+  }
+}

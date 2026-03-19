@@ -1,0 +1,28 @@
+{
+  "id": "cogitator",
+  "name": "COGITATOR MK.VII",
+  "colors": {
+    "accent":     "#39ff14",
+    "accentMed":  "#1a7a1a",
+    "accentDim":  "#0a3300",
+    "accentBg":   "#040f04",
+    "background": "#000000",
+    "warning":    "#cc4400",
+    "warningDim": "#3a1000"
+  },
+  "fonts": {
+    "display": "First Legion",
+    "mono":    "VT323"
+  },
+  "hyprland": {
+    "activeBorder":    "rgba(cc4400ff)",
+    "inactiveBorder":  "rgba(3a1000aa)",
+    "borderSize":      3,
+    "rounding":        0,
+    "sanctionedBorder":"rgba(39ff14ff) rgba(1a7a1aff) 45deg"
+  },
+  "effects": {
+    "scanlines": true,
+    "tacbracks": true
+  }
+}
