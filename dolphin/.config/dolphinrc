@@ -2,6 +2,7 @@
 BrowseOnStartup=false
 EditableUrl=false
 HomeUrl=file:///home/zeke
+LockPanels=false
 RememberOpenedTabs=false
 ShowFullPath=true
 ShowFullPathInTitlebar=true
