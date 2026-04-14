@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
-import Quickshell.Widgets
 
 Scope {
     id: root
@@ -22,7 +21,7 @@ Scope {
 
     Timer {
         id: hideTimer
-        interval: 1000
+        interval: 1500
         onTriggered: root.shouldShowOsd = false
     }
 
@@ -31,77 +30,107 @@ Scope {
 
         PanelWindow {
             anchors.bottom: true
-            margins.bottom: screen.height / 5
+            margins.bottom: 52
             exclusiveZone: 0
 
-            implicitWidth: 400
-            implicitHeight: 50
+            implicitWidth: 300
+            implicitHeight: 56
             color: "transparent"
             mask: Region {}
 
+            // Drop shadow layer
             Rectangle {
+                anchors.fill: pill
+                anchors.margins: -1
+                anchors.topMargin: 2
+                radius: pill.radius + 1
+                color: "#0d1117"
+                opacity: 0.5
+            }
+
+            // Pill container
+            Rectangle {
+                id: pill
                 anchors.fill: parent
-                radius: height / 2
-                color: "#80000000"
+                color: "#282828"
+                radius: 28
+                border.color: "#3c3836"
+                border.width: 1
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 15
+                    anchors.leftMargin: 18
+                    anchors.rightMargin: 18
+                    spacing: 14
 
+                    // Speaker icon
                     Canvas {
                         id: speakerIcon
-                        implicitWidth: 30
-                        implicitHeight: 30
+                        implicitWidth: 22
+                        implicitHeight: 22
                         onPaint: {
                             var ctx = getContext("2d")
                             ctx.clearRect(0, 0, width, height)
-                            ctx.fillStyle = "#ffffff"
-                            ctx.strokeStyle = "#ffffff"
-                            ctx.lineWidth = 2.2
+                            ctx.fillStyle   = "#fabd2f"
+                            ctx.strokeStyle = "#fabd2f"
+                            ctx.lineWidth   = 1.8
 
-                            var bx = 4
-                            var by = 11
-                            var bw = 6
-                            var bh = 8
-                            var mx = bx + bw
-                            var cy = by + bh / 2
-
+                            // Speaker body
                             ctx.beginPath()
-                            ctx.rect(bx, by, bw, bh)
+                            ctx.rect(2, 8, 5, 6)
                             ctx.fill()
 
+                            // Horn
                             ctx.beginPath()
-                            ctx.moveTo(mx, by - 2)
-                            ctx.lineTo(mx + 7, by - 5)
-                            ctx.lineTo(mx + 7, by + bh + 5)
-                            ctx.lineTo(mx, by + bh + 2)
+                            ctx.moveTo(7,  7)
+                            ctx.lineTo(14, 4)
+                            ctx.lineTo(14, 18)
+                            ctx.lineTo(7,  15)
                             ctx.closePath()
                             ctx.fill()
 
+                            // Sound waves
                             ctx.beginPath()
-                            ctx.arc(mx + 7, cy, 5, -0.7, 0.7)
+                            ctx.arc(14, 11, 3.5, -0.7, 0.7)
                             ctx.stroke()
-
                             ctx.beginPath()
-                            ctx.arc(mx + 7, cy, 8, -0.7, 0.7)
+                            ctx.arc(14, 11, 6,   -0.7, 0.7)
                             ctx.stroke()
                         }
                     }
 
-                    Rectangle {
+                    // Volume track
+                    Item {
                         Layout.fillWidth: true
-                        implicitHeight: 10
-                        radius: 20
-                        color: "#50ffffff"
+                        height: 6
 
                         Rectangle {
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            anchors.bottom: parent.bottom
-                            implicitWidth: parent.width * root.sinkVolume
-                            radius: parent.radius
+                            anchors.fill: parent
+                            radius: 3
+                            color: "#3c3836"
                         }
+                        Rectangle {
+                            anchors.left:   parent.left
+                            anchors.top:    parent.top
+                            anchors.bottom: parent.bottom
+                            width:  parent.width * Math.min(root.sinkVolume, 1.5)
+                            radius: 3
+                            color:  root.sinkVolume > 1.0 ? "#fb4934"
+                                  : root.sinkVolume > 0.95 ? "#fe8019"
+                                  : "#fabd2f"
+                            Behavior on width {
+                                SmoothedAnimation { velocity: 600 }
+                            }
+                        }
+                    }
+
+                    // Percentage readout
+                    Text {
+                        text: Math.round(root.sinkVolume * 100) + "%"
+                        color: "#ebdbb2"
+                        font.pixelSize: 13
+                        Layout.preferredWidth: 38
+                        horizontalAlignment: Text.AlignRight
                     }
                 }
             }

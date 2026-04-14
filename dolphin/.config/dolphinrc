@@ -1,0 +1,31 @@
+[General]
+BrowseOnStartup=false
+EditableUrl=false
+HomeUrl=file:///home/zeke
+LockPanels=false
+RememberOpenedTabs=false
+ShowFullPath=true
+ShowFullPathInTitlebar=true
+ShowZoomSlider=false
+Version=202
+ViewPropsTimestamp=2024,1,1,0,0,0
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=16
+Recent Files[$e]=
+
+[MainWindow]
+MenuBar=Disabled
+
+[PlacesPanel]
+IconSize=16
+
+[PreviewSettings]
+Plugins=appimagethumbnail,audiothumbnail,blenderthumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,svgthumbnail,textthumbnail,ffmpegthumbs
+
+[UiSettings]
+ColorScheme=GruvboxDark
+
+[VersionControl]
+enabledPlugins=

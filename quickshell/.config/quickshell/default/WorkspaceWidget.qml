@@ -4,39 +4,61 @@ import QtQuick
 import QtQuick.Layouts
 
 RowLayout {
-    spacing: 6
+    id: workspaceRow
+    spacing: 5
 
     Repeater {
-        model: 9
+        model: 10
 
         Item {
-            property var ws: Hyprland.workspaces.values.find(w => w.id === index + 1)
-            property bool isActive: Hyprland.focusedWorkspace?.id === (index + 1)
-            readonly property int paddingX: 8
-            readonly property int paddingY: 6
+            id: chip
 
-            implicitWidth: workspaceLabel.implicitWidth + (paddingX * 2)
-            implicitHeight: workspaceLabel.implicitHeight + (paddingY * 2)
+            property var  ws:         Hyprland.workspaces.values.find(w => w.id === index + 1)
+            property bool isActive:   Hyprland.focusedWorkspace?.id === (index + 1)
+            property bool isOccupied: ws !== undefined
+
+            // Always show 1-5; show 6-10 only when occupied
+            visible: index < 5 || isOccupied
+
+            implicitWidth:  Math.max(28, wsLabel.implicitWidth + 18)
+            implicitHeight: 24
 
             Rectangle {
+                id: bg
                 anchors.fill: parent
-                radius: 5
-                color: isActive ? "#2f5f4a" : "#2a2d44"
-                border.color: isActive ? "#6ee7b7" : "#3b4261"
+                radius: 6
+
+                color: chip.isActive   ? "#fabd2f"
+                     : hov.containsMouse ? "#504945"
+                     : chip.isOccupied  ? "#3c3836"
+                     : "transparent"
+
+                border.color: chip.isActive ? "transparent"
+                            : chip.isOccupied ? "transparent"
+                            : "#3c3836"
                 border.width: 1
+
+                Behavior on color { ColorAnimation { duration: 100 } }
             }
 
             Text {
-                id: workspaceLabel
+                id: wsLabel
                 anchors.centerIn: parent
-                text: index + 1
-                color: isActive ? "#d8ffef" : (ws ? "#c0caf5" : "#7a809a")
-                font { pixelSize: 12; bold: true }
+                text:  (index + 1).toString()
+                color: chip.isActive   ? "#1d2021"
+                     : chip.isOccupied ? "#d5c4a1"
+                     : "#665c54"
+                font.family:    "Lexend"
+                font.pixelSize: 13
+                font.bold:      chip.isActive
             }
 
             MouseArea {
-                anchors.fill: parent
-                onClicked: Hyprland.dispatch("workspace " + (index + 1))
+                id: hov
+                anchors.fill:  parent
+                hoverEnabled:  true
+                cursorShape:   Qt.PointingHandCursor
+                onClicked:     Hyprland.dispatch("workspace " + (index + 1))
             }
         }
     }

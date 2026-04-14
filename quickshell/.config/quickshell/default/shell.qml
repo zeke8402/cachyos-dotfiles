@@ -1,135 +1,71 @@
-//@ pragma IconTheme Adwaita
+//@ pragma IconTheme Papirus
 //@ pragma UseQApplication
 import Quickshell
-import Quickshell.Services.Pipewire
 import Quickshell.Wayland
 import Quickshell.Wayland._WlrLayerShell
+import Quickshell.Hyprland
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 
-WlrLayershell {
-    layer: WlrLayer.Top
-    namespace: "quickshell"
-    keyboardFocus: WlrKeyboardFocus.None
-    anchors.top: true
-    anchors.left: true
-    anchors.right: true
-    implicitHeight: 40
-    color: "#1a1b26"
+Scope {
+    FontLoader { source: "fonts/First Legion.ttf" }
+    FontLoader { source: "fonts/VT323-Regular.ttf" }
 
-    StatusBar {
-        id: statusBar
-        anchors.fill: parent
+    QtObject {
+        id: shellState
+        property bool settingsPanelOpen: false
+        property bool clockPanelOpen: false
+    }
+
+    Variants {
+        model: Quickshell.screens
+
+        WlrLayershell {
+            required property var modelData
+            screen: modelData
+            layer: WlrLayer.Top
+            namespace: "quickshell"
+            keyboardFocus: WlrKeyboardFocus.None
+            anchors.top: true
+            anchors.left: true
+            anchors.right: true
+            implicitHeight: 40
+            color: "#1d2021"
+
+            StatusBar {
+                anchors.fill: parent
+                onSettingsToggleRequested: shellState.settingsPanelOpen = !shellState.settingsPanelOpen
+                onClockToggleRequested: shellState.clockPanelOpen = !shellState.clockPanelOpen
+            }
+        }
+    }
+
+    SettingsPanel {
+        id: settingsPanel
+        open: shellState.settingsPanelOpen
+        statusBarHeight: 40
+        onCloseRequested: shellState.settingsPanelOpen = false
+    }
+
+    HyprlandFocusGrab {
+        active: shellState.settingsPanelOpen
+        windows: [settingsPanel]
+        onCleared: shellState.settingsPanelOpen = false
+    }
+
+    ClockPanel {
+        id: clockPanel
+        open: shellState.clockPanelOpen
+        statusBarHeight: 40
+        screenWidth: Quickshell.screens.length > 0 ? Quickshell.screens[0].width : 1920
+        onCloseRequested: shellState.clockPanelOpen = false
+    }
+
+    HyprlandFocusGrab {
+        active: shellState.clockPanelOpen
+        windows: [clockPanel]
+        onCleared: shellState.clockPanelOpen = false
     }
 
     VolumeOsd {}
-
-    PanelWindow {
-        id: volumePanel
-        visible: statusBar.volumePanelOpen
-        implicitWidth: 250
-        implicitHeight: 600
-        color: "#1f2335"
-        readonly property PwNode sinkNode: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink : null
-        readonly property PwNode sourceNode: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource : null
-        readonly property real sinkVolume: sinkNode && sinkNode.audio ? sinkNode.audio.volume : 0
-        readonly property real sourceVolume: sourceNode && sourceNode.audio ? sourceNode.audio.volume : 0
-
-        anchors {
-            top: true
-            right: true
-        }
-        margins {
-            top: statusBar.height + 8
-            right: 16
-        }
-
-        function setSinkVolume(v: real) {
-            if (sinkNode && sinkNode.audio) {
-                sinkNode.audio.volume = v
-            }
-        }
-
-        function setSourceVolume(v: real) {
-            if (sourceNode && sourceNode.audio) {
-                sourceNode.audio.volume = v
-            }
-        }
-
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 16
-            spacing: 16
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 10
-
-                Text {
-                    text: "OUT"
-                    color: "#c0caf5"
-                    font.pixelSize: 11
-                    font.bold: true
-                    width: 32
-                    horizontalAlignment: Text.AlignHCenter
-                }
-
-                Slider {
-                    Layout.fillWidth: true
-                    from: 0
-                    to: 1
-                    value: volumePanel.sinkVolume
-                    onMoved: volumePanel.setSinkVolume(value)
-                }
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 10
-
-                Text {
-                    text: "IN"
-                    color: "#c0caf5"
-                    font.pixelSize: 11
-                    font.bold: true
-                    width: 32
-                    horizontalAlignment: Text.AlignHCenter
-                }
-
-                Slider {
-                    Layout.fillWidth: true
-                    from: 0
-                    to: 1
-                    value: volumePanel.sourceVolume
-                    onMoved: volumePanel.setSourceVolume(value)
-                }
-            }
-
-            Item { Layout.fillHeight: true }
-
-            Rectangle {
-                Layout.fillWidth: true
-                height: 36
-                radius: 8
-                color: "#2a2d44"
-                border.color: "#3b4261"
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "Open Pavucontrol"
-                    color: "#c0caf5"
-                    font.pixelSize: 12
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        statusBar.volumePanelOpen = false
-                        Quickshell.execDetached(["pavucontrol"])
-                    }
-                }
-            }
-        }
-    }
+    // WindowTabs {}
 }

@@ -1,0 +1,133 @@
+// ── Gruvbox Dark — Rofi Theme ─────────────────────────────────────────────
+// Center-anchored launcher: input on top, results below.
+
+* {
+    bg:        #282828;
+    bg-alt:    #3c3836;
+    bg-sel:    #504945;
+    fg:        #ebdbb2;
+    fg-dim:    #a89984;
+    fg-muted:  #665c54;
+    accent:    #fabd2f;
+
+    background-color: transparent;
+    text-color:       @fg;
+    border-color:     @bg-alt;
+    font:             "Lexend 14";
+}
+
+// ── Window ────────────────────────────────────────────────────────────────
+window {
+    background-color: @bg;
+    border:           1px solid;
+    border-color:     @bg-alt;
+    border-radius:    12px;
+    width:            540px;
+    location:         center;
+    anchor:           center;
+    padding:          8px;
+    cursor:           default;
+}
+
+// ── Main container — input on top, results below ──────────────────────────
+mainbox {
+    background-color: transparent;
+    children:         [ inputbar, listview ];
+    spacing:          8px;
+    padding:          0;
+}
+
+// ── Input bar ─────────────────────────────────────────────────────────────
+inputbar {
+    background-color: @bg-alt;
+    border-radius:    8px;
+    padding:          10px 14px;
+    spacing:          0;
+    children:         [ entry ];
+}
+
+entry {
+    background-color: transparent;
+    text-color:       @fg;
+    cursor-color:     @accent;
+    placeholder:      "Search apps…";
+    placeholder-color: @fg-muted;
+    cursor:           text;
+}
+
+// ── Results list ──────────────────────────────────────────────────────────
+listview {
+    background-color: transparent;
+    padding:          4px 0;
+    spacing:          2px;
+    lines:            8;
+    fixed-height:     false;
+    columns:          1;
+    scrollbar:        false;
+    reverse:          false;
+}
+
+// ── Individual result rows ────────────────────────────────────────────────
+element {
+    background-color: transparent;
+    border-radius:    6px;
+    padding:          7px 12px;
+    spacing:          10px;
+    cursor:           pointer;
+}
+
+element.normal.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element.normal.urgent {
+    text-color: #fb4934;
+}
+
+element.normal.active {
+    text-color: @accent;
+}
+
+element.selected.normal {
+    background-color: @bg-alt;
+    text-color:       @fg;
+    border:           0px 0px 0px 3px;
+    border-color:     @accent;
+}
+
+element.selected.urgent {
+    background-color: @bg-alt;
+    text-color:       #fb4934;
+    border:           0px 0px 0px 3px;
+    border-color:     #fb4934;
+}
+
+element.selected.active {
+    background-color: @bg-alt;
+    text-color:       @accent;
+    border:           0px 0px 0px 3px;
+    border-color:     @accent;
+}
+
+element-icon {
+    background-color: transparent;
+    size:             22px;
+    cursor:           inherit;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    highlight:        bold #fabd2f;
+    cursor:           inherit;
+    vertical-align:   0.5;
+}
+
+// ── Suppress unused widgets ───────────────────────────────────────────────
+prompt            { enabled: false; }
+num-filtered-rows { enabled: false; }
+num-rows          { enabled: false; }
+textbox-num-sep   { enabled: false; }
+case-indicator    { enabled: false; }
+scrollbar         { enabled: false; }
